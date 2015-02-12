@@ -1,6 +1,6 @@
 # Sweet-Liberty
 
-Sweet-Liberty is a library for building database-backed RESTful services in a composable way. It's name derives from its two principle dependencies, [HoneySQL](https://github.com/jkk/honeysql), a declarative query string renderer, and [Liberator](https://clojure-liberator.github.io/liberator/), a library for building REST-compliant web applications.
+Sweet-Liberty is a library for building database-backed RESTful services using Clojure. Its name derives from its two principle dependencies, [HoneySQL](https://github.com/jkk/honeysql), a declarative query string renderer, and [Liberator](https://clojure-liberator.github.io/liberator/), a library for building REST-compliant web applications.
 
 ### Including Sweet-Liberty
 Sweet-Liberty is available on [Clojars](https://clojars.org/) at:
@@ -40,7 +40,7 @@ Sweet-Liberty requires `wrap-params` in [`ring.middleware.params`](https://mmcgr
 
 ### Example application
 
-https://github.com/RJMetrics/############# <!--- add correct link --->
+https://github.com/RJMetrics/sweet-liberty-example
 
 ## Table of Contents
 
@@ -172,7 +172,7 @@ The Sweet-Liberty configuration map has two top level properties:
 
 ### Liberator Configuration
 
-As stated above, [Liberator](https://clojure-liberator.github.io/liberator/) is used under the hood to provide HTTP and REST compliant behavior through it's awesome [decision graph](https://clojure-liberator.github.io/liberator/tutorial/decision-graph.html). While it may not be strictly necessary to have knowledge of Liberator in order to use Sweet-Liberty, a little bit of understanding will take you a long way.
+As stated above, [Liberator](https://clojure-liberator.github.io/liberator/) is used under the hood to provide HTTP and REST compliant behavior through its awesome [decision graph](https://clojure-liberator.github.io/liberator/tutorial/decision-graph.html). While it may not be strictly necessary to have knowledge of Liberator in order to use Sweet-Liberty, a little bit of understanding will take you a long way.
 
 Sweet-Liberty allows you to fully leverage Liberator by leaving the Liberator configuration map exposed during route configuration.
 
@@ -188,7 +188,7 @@ If you do not need to customize Liberator in any way, just pass through an empty
 ### Sweet-Liberty Configuration
 
 This section describes the configuration values that can be set in the `:options' map.
-A useful convention is to separate resource-specific config from common config value and then merge the applicable maps on a per-route basis. As such, the configuration options are presented in two tables. The first contains values that are typically specific to a resource. The second contains values that are typically common across resources. Check out the [example application](https://github.com/RJMetrics/#############) <!--- link ---> for how you might organize this type of scheme, but, ultimately, those details are up to you.
+A useful convention is to separate resource-specific config from common config value and then merge the applicable maps on a per-route basis. As such, the configuration options are presented in two tables. The first contains values that are typically specific to a resource. The second contains values that are typically common across resources. Check out the [example application](https://github.com/RJMetrics/sweet-liberty-example) for how you might organize this type of scheme, but, ultimately, those details are up to you.
 
 > Configuration options typically set on a **per resource** basis
 
@@ -254,7 +254,7 @@ Example config:
 
 The expansion configuration specifies how to *join* one resource to another. The configuration includes:
 
--  the foreign resource name (which the service broker must understand <!---link--->)
+-  the foreign resource name (which the service broker must understand)
 -  a list of local and foreign key fields to bind on, and
 - a list of any headers that should be propagated from the original request to the expansion request. This comes in handy for cache control and authentication purposes. 
 
