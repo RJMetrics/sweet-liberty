@@ -99,7 +99,7 @@
                                      data)))
   (let [params (hash-map column-name (vec (map column-name data)))
         result (get-records-from-storage db-spec table params)]
-    (assoc ctx util/entities-kw result)))
+    {util/entities-kw result}))
 
 (defn update-entity-in-storage
   "Execute statement to update one or more entities from storage."
@@ -114,7 +114,7 @@
                                        table
                                        db-spec
                                        data)
-      (assoc ctx util/entities-kw (get-records-from-storage db-spec table params)))))
+      {util/entities-kw (get-records-from-storage db-spec table params)})))
 
 (defn delete-entity-in-storage
   "Execute statement to delete an entity from storage."

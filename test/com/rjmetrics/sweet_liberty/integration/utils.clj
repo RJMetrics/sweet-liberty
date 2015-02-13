@@ -15,7 +15,7 @@
 
 (def default-table :test_table)
 
-(def default-table-structure {:attributes [:name :id :state :datetime :date :timestamp]
+(def default-table-structure {:attributes [:name :id :state :note :datetime :date :timestamp]
                               :table-name default-table
                               :primary-key :id})
 
@@ -30,6 +30,7 @@
                                       [[:id "INTEGER" "NOT NULL" "IDENTITY"]
                                       [:name "VARCHAR(255)" "NOT NULL"]
                                       [:state "INTEGER" "NOT NULL"]
+                                      [:note "VARCHAR(255)"]
                                       [:datetime "DATETIME"]
                                       [:date "DATE"]
                                       [:timestamp "TIMESTAMP"]]))
@@ -45,9 +46,9 @@
 (defn populate-table
   ([db-spec] (populate-table db-spec default-table))
   ([db-spec table-name]
-     (apply j/insert! db-spec table-name [["id" "name" "state" "datetime" "date" "timestamp"]
-                                          [0 "test0" 0 nil nil nil]
-                                          [1 "test1" 1 "2014-10-15 10:25:49" "1986-04-26" "2014-10-15 10:25:49"]])))
+     (apply j/insert! db-spec table-name [["id" "name" "state" "note" "datetime" "date" "timestamp"]
+                                          [0 "test0" 0 nil nil nil nil]
+                                          [1 "test1" 1 nil "2014-10-15 10:25:49" "1986-04-26" "2014-10-15 10:25:49"]])))
 
 (defn get-all-rows
   ([db-spec] (get-all-rows db-spec default-table))

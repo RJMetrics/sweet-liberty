@@ -17,7 +17,8 @@
 (def db-spec (get-db-spec "testdb"))
 (def table-structure {:attributes [:id
                                    :name
-                                   :state]
+                                   :state
+                                   :note]
                       :table-name :test-table
                       :primary-key :id
                       :indices [:name]})
@@ -34,12 +35,12 @@
   (apply jdbc/insert!
          db-spec
          table-name
-         [["id" "name" "state"]
-          [0 "test0" 0]
-          [1 "test1" 1]
-          [2 "test2" 1]
-          [3 "test3" 0]
-          [4 "test3" 0]]))
+         [["id" "name" "state" "note"]
+          [0 "test0" 0 ""]
+          [1 "test1" 1 ""]
+          [2 "test2" 1 ""]
+          [3 "test3" 0 ""]
+          [4 "test3" 0 ""]]))
 
 (initialize-db db-spec populate-rows)
 
@@ -145,12 +146,12 @@
                        [:options :conditions :create :before]
                        (fn [data ctx]
                          (handler (body (request :post "/insert")
-                                        {:state 2 :name "before-cond"}))
+                                        {:state 2 :name "before-cond" :note (pr-str data)}))
                          true))
              (assoc-in [:options :conditions :create :after]
                        (fn [data result-data ctx]
                          (handler (body (request :post "/insert")
-                                        {:state 3 :name "after-cond"}))
+                                        {:state 3 :name "after-cond" :note (pr-str data result-data)}))
                          true))
              (add-post&handler))))
   (POST "/insert-with-bad-conditions" []
@@ -258,6 +259,7 @@
         (:status result) => 200
         (json/read-str (:body result) :key-fn keyword) => {:state 1
                                                            :name "test1"
+                                                           :note ""
                                                            :id 1}
         (:headers result) => default-headers))
 
@@ -319,14 +321,14 @@
                result => (just {:headers default-headers
                                 :body #""
                                 :status 200})
-               (json/read-str (:body result)) => {"id" 2 "name" "test2" "state" 1}))
+               (json/read-str (:body result)) => {"id" 2 "name" "test2" "note" "" "state" 1}))
 
        (fact :name-transforms "getting a resource by id name-transforms work"
              (let [result (handler (request :get "/name-transform/2"))]
                result => (just {:headers default-headers
                                 :body #""
                                 :status 200})
-               (json/read-str (:body result)) => {"di" 2 "name" "test2" "state" 1}))
+               (json/read-str (:body result)) => {"di" 2 "name" "test2" "note" "" "state" 1}))
 
        (fact "giving query params for columns that don't exist should return all rows"
              (count (json/read-str (:body (handler (request :get "/?asd=xyz"))))) => 5))
@@ -399,14 +401,14 @@
              (let [result (handler (-> (request :post "/insert")
                                        (body {:name "nate" :state 1})))]
                (json/read-str (:body result) :key-fn keyword)
-               => {:id 5, :name "nate", :state 1}))
+               => {:id 5, :name "nate", :note nil :state 1}))
        (fact "insert and return entity with id properly set for json"
              (let [result (-> (request :post "/insert")
                               (content-type "application/json")
                               (assoc :body (util/to-json-input-stream {:name "nate2" :state 0}))
                               handler)]
                (json/read-str (:body result) :key-fn keyword)
-               => {:id 6 :name "nate2" :state 0})))
+               => {:id 6 :name "nate2" :note nil :state 0})))
 
 (facts "about paging"
        (fact "a page request with only some page keys does not page"
@@ -436,8 +438,8 @@
                    :headers default-headers
                    :status 200})
              (json/read-str (:body response) :key-fn keyword)
-             => [{:state 0 :name "test0" :id 0}
-                 {:state 1 :name "test1" :id 1}]))
+             => [{:note "" :state 0 :name "test0" :id 0}
+                 {:note "" :state 1 :name "test1" :id 1}]))
        (fact "a page request at the end of ids works"
              (let [response (handler (request :get "/?_page=2&_pagesize=2&_pagekey=id"))]
                response
@@ -445,8 +447,8 @@
                              :headers default-headers
                              :status 200})
                (json/read-str (:body response) :key-fn keyword)
-               => [{:state 0 :name "test3" :id 4}
-                   {:state 1 :name "nate" :id 5}]))
+               => [{:note "" :state 0 :name "test3" :id 4}
+                   {:note nil :state 1 :name "nate" :id 5}]))
        (fact "a page request on strings works"
              (let [response (handler (request :get "/?_page=0&_pagesize=2&_pagekey=name"))]
                response
@@ -454,8 +456,8 @@
                          :headers default-headers
                          :status 200})
                (json/read-str (:body response) :key-fn keyword)
-               => [{:state 1 :name "nate" :id 5}
-                   {:state 0 :name "nate2" :id 6}]))
+               => [{:note nil :state 1 :name "nate" :id 5}
+                   {:note nil :state 0 :name "nate2" :id 6}]))
        (fact "a page request with filters works"
              (let [response (handler (request :get "/?_page=0&_pagesize=2&_pagekey=name&name=test0&name=test1&name=test2&name=test3"))]
                response
@@ -463,8 +465,8 @@
                          :headers default-headers
                          :status 200})
                (json/read-str (:body response) :key-fn keyword)
-               => [{:state 0 :name "test0" :id 0}
-                   {:state 1 :name "test1" :id 1}]))
+               => [{:note "" :state 0 :name "test0" :id 0}
+                   {:note "" :state 1 :name "test1" :id 1}]))
        (fact "paging on non-included fields works"
              (handler (request :get "/?_page=0&_pagesize=2&_pagekey=id&_fields=name"))
              => {:body (json/write-str [{:name "test0"}
@@ -479,7 +481,7 @@
                          (body body-data)
                          (handler))]
           (json/read-str (:body result) :key-fn keyword)
-          => {:id 7, :name "nope", :state 1}))
+          => {:id 7, :name "nope", :note nil :state 1}))
 
   (fact "input names are transformed correctly" :dev
         (let [body-data {:state 1 :the-name "nope"}
@@ -487,7 +489,7 @@
                          (body body-data)
                          (handler))]
           (json/read-str (:body result) :key-fn keyword)
-          => {:id 8, :the-name "nope", :state 1}))
+          => {:id 8, :the-name "nope", :note nil :state 1}))
 
 (facts "about /insert-with-conditions"
        (fact "it will insert 3 items, one before, one during, one after"
@@ -498,9 +500,12 @@
                    sandwich-item (handler (request :get "/10"))
                    after-item (handler (request :get "/11"))]
                (:status result) => 201
-               (json/read-str (:body before-item) :key-fn keyword) => {:state 2 :name "before-cond" :id 9}
-               (json/read-str (:body sandwich-item) :key-fn keyword) => {:state 1 :name "sandwiched" :id 10}
-               (json/read-str (:body after-item) :key-fn keyword) => {:state 3 :name "after-cond" :id 11}))
+               (json/read-str (:body before-item) :key-fn keyword) => {:state 2 :name "before-cond" :note "{:name \"sandwiched\", :state \"1\"}" :id 9}
+               (json/read-str (:body sandwich-item) :key-fn keyword) => {:note nil :state 1 :name "sandwiched" :id 10}
+               (json/read-str (:body after-item) :key-fn keyword) => {:state 3
+                                                                      :name "after-cond"
+                                                                      :note "{:name \"sandwiched\", :state \"1\"} {:com.rjmetrics.sweet-liberty.core/post-id 10}"
+                                                                      :id 11}))
        (fact "it will fail when a bad pre-condition is specified"
              (let [result (-> (request :post "/insert-with-bad-conditions")
                               (body {:state false :name true})
@@ -604,29 +609,29 @@
              (let [result (handler (body (request :put "/update/2")
                                          {:name "new-name!"}))]
                (json/read-str (:body result) :key-fn keyword)
-               => {:state 1 :name "new-name!" :id 2}
+               => {:note "" :state 1 :name "new-name!" :id 2}
                (:status result) => 200))
        (fact "updating a single item with a name-transform works"
              (let [result (handler (body (request :put "/update-different-id-name/2")
                                          {:name "new-name!"}))]
                (json/read-str (:body result) :key-fn keyword)
-               => {:state 1 :name "new-name!" :sid 2}
+               => {:note "" :state 1 :name "new-name!" :sid 2}
                (:status result) => 200))
        (fact "updating a single item with a tranform works"
              (let [result (handler (body (request :put "/update-transform/2")
                                         {:the-name "transformed-worked!"}))]
                (json/read-str (:body result) :key-fn keyword)
-               => {:state 1 :name "transformed-worked!" :id 2}))
+               => {:note "" :state 1 :name "transformed-worked!" :id 2}))
        (fact "updating a single item with name tranforms works"
              (let [result (handler (body (request :put "/update-name-transforms/2")
                                         {:the-name "transformed-worked!"}))]
                (json/read-str (:body result) :key-fn keyword)
-               => {:state 1 :the-name "transformed-worked!" :id 2}))
+               => {:note "" :state 1 :the-name "transformed-worked!" :id 2}))
        (fact "updating a single item with url-params works"
              (let [result (handler (body (request :put "/update/diff/2")
                                          {:name "new-name-2!"}))]
                (json/read-str (:body result) :key-fn keyword)
-               => {:id 2 :name "new-name-2!" :state 1}
+               => {:id 2 :name "new-name-2!" :note "" :state 1}
                (:status result) => 200))
        (fact "updating a single item via json works"
              (let [result (-> (request :put "/update/2")
@@ -635,7 +640,7 @@
                               (content-type "application/json")
                               handler)]
                (json/read-str (:body result) :key-fn keyword)
-               => {:id 2 :name "other name!" :state 1}
+               => {:id 2 :name "other name!" :note "" :state 1}
                (:status result) => 200))
        (fact "updating a single item and show that ::existing-entities-transformed works"
              (let [result (-> (request :put "/update-append-original-name/3")
@@ -644,22 +649,22 @@
                               (content-type "application/json")
                               handler)]
                (json/read-str (:body result) :key-fn keyword)
-               => {:id 3, :name "other name! 2", :original-name "test3", :state 0}
+               => {:id 3, :name "other name! 2", :original-name "test3", :note "" :state 0}
                (:status result) => 200))
        (fact "updating multiple items works"
              (let [raw-request (-> (request :put "/updates")
                                    (assoc :body (util/to-json-input-stream
                                                  [{:id 3 :name "new-name-3"}
-                                                  {:id 4 :name "new-name-4" :state 55}]))
+                                                  {:id 4 :name "new-name-4" :note "" :state 55}]))
                                    (content-type "application/json"))
                    result (handler raw-request)
                    new-items (handler (request :get "/?id=3&id=4"))]
                (json/read-str (:body result) :key-fn keyword)
-               => [{:state 0 :name "new-name-3" :id 3}
-                   {:state 55 :name "new-name-4" :id 4}]
+               => [{:note "" :state 0 :name "new-name-3" :id 3}
+                   {:note "" :state 55 :name "new-name-4" :id 4}]
                (json/read-str (:body new-items) :key-fn keyword)
-               => [{:state 0 :name "new-name-3" :id 3}
-                   {:state 55 :name "new-name-4" :id 4}]))
+               => [{:note "" :state 0 :name "new-name-3" :id 3}
+                   {:note "" :state 55 :name "new-name-4" :id 4}]))
        (fact "updating an item that doesn't exist fails"
              (let [before (handler (request :get "/"))
                    result (handler (request :put "/update/99999999"))
