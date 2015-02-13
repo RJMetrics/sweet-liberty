@@ -174,16 +174,16 @@
     ;; /update   | [{"name": "new-name", "id": 5} {"name": "other", "id": 6}]
     (let [data (req/extract-merged-body-params request url-params)
           transformed-params (p/resource->db ctx
-                                           (req/extract-merged-query-params request url-params)
-                                           :key-rename-map name-transforms
-                                           :values-transform-fn query-transform)
+                                             (req/extract-merged-query-params request url-params)
+                                             :key-rename-map name-transforms
+                                             :values-transform-fn query-transform)
           transformed-column-name (get (map-invert name-transforms)
                                        column-name
                                        column-name)]
       (->> (p/resource->db ctx
-                         data
-                         :key-rename-map name-transforms
-                         :values-transform-fn input-transform)
+                           data
+                           :key-rename-map name-transforms
+                           :values-transform-fn input-transform)
            (partial db/update-entity-in-storage
                     transformed-column-name
                     (keywordize-keys transformed-params)
