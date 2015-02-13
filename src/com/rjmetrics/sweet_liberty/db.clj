@@ -90,13 +90,13 @@
   the where item, and merge them together with what's already on the context"
   [column-name params ctx table db-spec data]
   (j/with-db-transaction [conn db-spec]
-                         (dorun (map #(update-single-entity-in-storage column-name
-                                                                       (merge params
-                                                                              {column-name (get % column-name)})
-                                                                       table
-                                                                       conn
-                                                                       %)
-                                     data)))
+    (dorun (map #(update-single-entity-in-storage column-name
+                                                  (merge params
+                                                         {column-name (get % column-name)})
+                                                  table
+                                                  conn
+                                                  %)
+                data)))
   (let [params (hash-map column-name (vec (map column-name data)))
         result (get-records-from-storage db-spec table params)]
     {util/entities-kw result}))
@@ -121,6 +121,6 @@
   [column-name params table db-spec data]
   (execute-with-logging! db-spec
                          (q/build-delete-statement (dialect db-spec)
-                                                       table
-                                                       params
-                                                       column-name)))
+                                                   table
+                                                   params
+                                                   column-name)))
