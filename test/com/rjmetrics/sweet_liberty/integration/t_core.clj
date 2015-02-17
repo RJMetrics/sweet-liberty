@@ -483,7 +483,7 @@
           (json/read-str (:body result) :key-fn keyword)
           => {:id 7, :name "nope", :note nil :state 1}))
 
-  (fact "input names are transformed correctly" :dev
+  (fact "input names are transformed correctly"
         (let [body-data {:state 1 :the-name "nope"}
               result (-> (request :post "/insert-name-transforms")
                          (body body-data)
@@ -504,7 +504,7 @@
                (json/read-str (:body sandwich-item) :key-fn keyword) => {:note nil :state 1 :name "sandwiched" :id 10}
                (json/read-str (:body after-item) :key-fn keyword) => {:state 3
                                                                       :name "after-cond"
-                                                                      :note "{:name \"sandwiched\", :state \"1\"} {:com.rjmetrics.sweet-liberty.core/post-id 10}"
+                                                                      :note "{:name \"sandwiched\", :state \"1\"} 10"
                                                                       :id 11}))
        (fact "it will fail when a bad pre-condition is specified"
              (let [result (-> (request :post "/insert-with-bad-conditions")
@@ -604,7 +604,7 @@
                (:body result) => "OK"
                (:status result) => 200)))
 
-(facts "about put"
+(fact-group "about put"
        (fact "updating a single item works"
              (let [result (handler (body (request :put "/update/2")
                                          {:name "new-name!"}))]

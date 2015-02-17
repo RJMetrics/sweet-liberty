@@ -69,9 +69,9 @@
                                  :table (:table-name table)
                                  :row row-map
                                  :query-result result)))
-    {util/post-id-kw (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
-                   ffirst
-                   val)}))
+     (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
+           ffirst
+           val)))
 
 
 (defn update-single-entity-in-storage
@@ -99,7 +99,7 @@
                 data)))
   (let [params (hash-map column-name (vec (map column-name data)))
         result (get-records-from-storage db-spec table params)]
-    {util/entities-kw result}))
+    result))
 
 (defn update-entity-in-storage
   "Execute statement to update one or more entities from storage."
@@ -114,7 +114,7 @@
                                        table
                                        db-spec
                                        data)
-      {util/entities-kw (get-records-from-storage db-spec table params)})))
+      (get-records-from-storage db-spec table params))))
 
 (defn delete-entity-in-storage
   "Execute statement to delete an entity from storage."

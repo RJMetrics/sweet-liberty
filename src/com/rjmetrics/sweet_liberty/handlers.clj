@@ -142,10 +142,11 @@
                                          data
                                          :key-rename-map name-transforms
                                          :values-transform-fn input-transform)]
-      (run-with-conditions data
-                           conditions
-                           ctx
-                           #(db/insert-entity-into-storage table db-spec transformed-data)))))
+      (->>  (run-with-conditions data
+                                 conditions
+                                 ctx
+                                 #(db/insert-entity-into-storage table db-spec transformed-data))
+            (hash-map util/post-id-kw)))))
 
 (defn make-read-entities-fn
   "Create a function that returns a entity collection after running the given
@@ -192,7 +193,8 @@
                     db-spec)
            (run-with-conditions data
                                 conditions
-                                ctx)))))
+                                ctx)
+           (hash-map util/entities-kw)))))
 
 (defn make-delete-entity-fn
   "Make a handler function for deleting one or more entities from storage."
