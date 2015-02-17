@@ -5,7 +5,7 @@ Sweet-Liberty is a library for building database-backed RESTful services using C
 ### Including Sweet-Liberty
 Sweet-Liberty is available on [Clojars](https://clojars.org/) at:
 
-`[com.rjmetrics.developers/sweet-liberty "0.1.0"]`
+`[com.rjmetrics.developers/sweet-liberty "0.1.1"]`
 
 Require with `(require [com.rjmetrics.sweet-liberty.core :as sl)`
 
