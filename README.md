@@ -345,30 +345,36 @@ Example:
 
 Below is the ordered list of operations that may be applied to a request, which ultimately yields the response.
 
-1. Authentication
-	- set by `add-authorization`
-2. Existence check -- set by `add-exists` 
-    - paging, field selection, filtering and query transforms occur here
-3. Pre-conditions are executed
-	- specified in [configuration](#conditions)
-4. HTTP method specific function executes
-	- set by `add-get`, `add-post`, `add-put` or `add-delete`
-	- `INSERT`, `UPDATE` or `DELETE` will be executed against database at this step
-5. Post-conditions are executed
-		- specified in [configuration](#conditions)
-6. Input transforms occur
- 	- specified in [configuration](#sweet-liberty-configuration)
-7. HTTP status handler is executed here
-	- set by `add-ok-handler` or `add-created-handler`
-8. Output transforms occur
-	- specified in [configuration](#sweet-liberty-configuration) 
-9. Expansions are executed and merged into result set
-	- specified in [configuration](#expansion-configuration) 
-10. Controller executes
-	- specified in [configuration](#sweet-liberty-configuration)   
-11. Response is returned
+1. Authentication and authorization checks are executed.
+   - set by `add-authorization`
+2. Existence check -- set by `add-exists`
+   - Paging, field selection, filtering and query transforms occur here.
+3. Output Transforms are applied to any existing records retrieved.
+   - If request is a GET, we are **done**. Response is returned. Otherwise, execution continues.
+   - [documentation](#sweet-liberty-configuration)
+4. Input Transforms are applied to incoming data.
+   - [documentation](#sweet-liberty-configuration)
+5. "Before" conditions are executed.
+   - If the function returns false, an http status 400 will be returned.
+   - [documentation](#conditions)
+6. HTTP method specific function executes.
+   - set by `add-get`, `add-post`, `add-put` or `add-delete`
+   - Appropriate `INSERT`, `UPDATE` or `DELETE` sql statements will be executed against database at this step.
+7. Resulting records are read from database.
+8. "After" conditions are executed.
+   - [documentation](#conditions)
+9. Output transforms are applied to any out-going records.
+   - [documentation](#sweet-liberty-configuration)
+10. Expansions are executed and merged into result set.
+    - specified in [configuration](#expansion-configuration)
+11. Controller executes
+    - [documentation](#sweet-liberty-configuration)
+12. HTTP status handler is executed here
+    - set by `add-ok-handler` or `add-created-handler`
+13. Response is returned.
 
 If an exception occurs that sweet-liberty itself throws, it uses [ex-info](https://clojure.github.io/clojure/clojure.core-api.html#clojure.core/ex-info) to generate the exception. This exception info will be logged, and it will be returned in the response only if the `return-exceptions?` option is true in the sweet-lib config.
+
 
 ## Logging with log4j
 
