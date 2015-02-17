@@ -244,11 +244,14 @@ The `:before` function will receive the current data and context. The `:after` f
 
 Example config:
 ```Clojure
-{:create {:before (fn [data ctx] ...)
-          :after (fn [data result ctx] ...)}
- :update {:before (fn [data ctx] ... )}
- :delete {:after (fn [data result ctx] ...)}}
+{:create {:before (fn [data context] ...)
+          :after (fn [data result context] ...)}
+ :update {:after (fn [data result context] ... )}
+ :delete {:before (fn [data context] ...)}}
 ```
+
+The before and after conditions have a signature of `[data context]` and `[data result context]` respectively. In each case, `data` will be the original resource value that was contained in the request. `Result` is only available to *after* conditions. Its contents depends on the http method of the request. For a `PUT` (`UPDATE`), the `result` will be the results record(s) selected from the database after the `UPDATE` statement was executed. For a `POST` (`INSERT`), `result` will equal the primary key id value of the newly created record.
+
 
 #### Expansion Configuration
 
