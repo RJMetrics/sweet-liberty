@@ -201,11 +201,11 @@ Key | Required? |Type | Description
 `:ignore-index-constraint` |No | Boolean | If `true`, allows otherwise index/primary-key constrained operations to run on any column. Use with **caution** -- sorting by a field without an index can be slow and resource-intensive.
 `:defaults` | No |Map | Contains default filters. Expects `{:[FIELD NAME] value}`.
 `:conditions` | No | Map of functions | See [condition configuration](#conditions) below.
-`:name-transforms` | No | {:db-column-name :resource-name} | Transform the keys of data going in or out
+`:name-transforms` | No | {:db-column-name :resource-attribute-name} | Transform the keys of data going in or out
 `:query-transform` | No | (fn [data context] ...) | Transform any query data. Done during exists?
-`:input-transform` | No | (fn [data context] ...) | Transform data before it goes to the db
-`:output-transform` | No | (fn [data context] ...) | Transforms data before it's expanded
-`:controller` | No | (fn [data context] ...) | Transforms data after expansion, before it's returned to the user.
+`:input-transform` | No | (fn [data context] ...) | Transform data before it goes to the database
+`:output-transform` | No | (fn [data context] ...) | Transforms data on its way out, but before expansions occcur
+`:controller` | No | (fn [data context] ...) | Transforms data after expansion, before it's returned in the response.
 `:expansions` | No | Map of maps | See [expansion configuration](#expansion-configuration) below.
 
 > Configuration options typically common to all resources and routes
