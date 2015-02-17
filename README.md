@@ -213,7 +213,7 @@ Key | Required? |Type | Description
 Key | Required? |Type | Description
 ----|-----------|---------------|--------------
 `:db-spec` | Yes | Map | The map should contain all information needed to connect to a database by JDBC. See [db-spec example](#db-spec-example) below.
-`:return-exceptions?` | No | Boolean | If this is true, internal sweet-lib exceptions with stack traces will be returned in responses. Otherwise, only a message indicating an internal sweet-lib error will be returned.
+`:return-exceptions?` | No | Boolean | If this is true, internal sweet-lib exceptions with stack traces will be returned in responses. Otherwise, only a message indicating an internal sweet-lib error will be returned. Additionally, if this is true *and* if you have not set an exception handler using `add-exception-handler`, *all* exceptions will show a stack trace in the response. This should not be set to `true` in production.
 `:service-broker` | No | Function | A method to return a result from another service. This is only required if you want routes to support the [expansion](#expansion) operation.
 
 > Configuration options typically set on a **per route** basis
