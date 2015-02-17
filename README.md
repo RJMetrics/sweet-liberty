@@ -214,7 +214,7 @@ Key | Required? |Type | Description
 ----|-----------|---------------|--------------
 `:db-spec` | Yes | Map | The map should contain all information needed to connect to a database by JDBC. See [db-spec example](#db-spec-example) below.
 `:return-exceptions?` | No | Boolean | If this is true, internal sweet-lib exceptions with stack traces will be returned in responses. Otherwise, only a message indicating an internal sweet-lib error will be returned. Additionally, if this is true *and* if you have not set an exception handler using `add-exception-handler`, *all* exceptions will show a stack trace in the response. This should not be set to `true` in production.
-`:service-broker` | No | Function | A method to return a result from another service. This is only required if you want routes to support the [expansion](#expansion) operation.
+`:service-broker` | No | Function | A method to return a result from another service. This is only required if you want routes to support the [expansion](#expansion) operation. A reference implementation of a service broker is available [here](https://github.com/RJMetrics/simple-service-broker) on github.
 
 > Configuration options typically set on a **per route** basis
 
@@ -265,16 +265,18 @@ Example expansion configuration:
 
 ```Clojure
 {:owner {:join [:id :dog-id] ;; [local key, foreign key]
+	 :action :get-single
          :headers [:cache-control]}
 ```
 
-In the example above, making a request such as `GET /dogs?id=1&id=2&_expand=owner`, might result in a response such as the one below. For each dog object, the respective data for the owner has been retrieved and appended. Internally, Sweet-Liberty calls the service broker with all the relevant information about what resources need to be fetched. The service broker is carry out the actual communications and return any responses it receives. Sweet-Liberty then merges those responses to form the full data set response.
+In the example above, making a request such as `GET /dogs?id=1&id=2&_expand=owner`, might result in a response such as the one below. For each dog object, the respective data for the owner has been retrieved and appended. Internally, Sweet-Liberty calls the service broker with all the relevant information about what resources need to be fetched. The resource name (`:owner`) and the action (`:get-single`) are unique values that the service broker needs to be configured to understand. The service broker carries out the actual communications and returns any responses it receives. Sweet-Liberty then merges those responses to form the full data set response.
 
 ```Clojure
 [{:id 1 :name "Lacy" :breed "corgi" :owner {:id 8 :name "Josh"}}
  {:id 2 :name "Rex" :breed "chihuahua" :owner {:id 4 :name "Owen"}}]
 ```
 
+A reference implementation of a service broker is available [here](https://github.com/RJMetrics/simple-service-broker) on github.
 
 ### Core Functions
 
