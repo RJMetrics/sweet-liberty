@@ -36,7 +36,7 @@ Sweet-Liberty powered endpoints support the following:
 
 ### Required Middleware **(important!)**
 
-Sweet-Liberty requires `wrap-params` in [`ring.middleware.params`](https://mmcgrana.github.io/ring/ring.middleware.params.html). This is built-in if you use `lib-noir` for your handler.
+Sweet-Liberty requires `wrap-params` in [`ring.middleware.params`](https://ring-clojure.github.io/ring/ring.middleware.params.html#var-wrap-params). This is built-in if you use `lib-noir` for your handler.
 
 ### Example application
 
