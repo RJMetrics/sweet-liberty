@@ -74,9 +74,10 @@
                                  :table (:table-name table)
                                  :row row-map
                                  :query-result result)))
-     (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
-           ffirst
-           val)))
+    (if (nil? (ffirst result)) (get data (:primary-key table))  ;if result is nil then we set the primary key ourselves
+                      (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
+                             ffirst
+                             val))))
 
 
 (defn update-single-entity-in-storage
