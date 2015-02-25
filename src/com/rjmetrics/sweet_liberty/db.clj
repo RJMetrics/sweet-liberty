@@ -61,11 +61,16 @@
   (let [mdc (into {} (org.apache.log4j.MDC/getContext))
         table-name (util/dash-to-underscore-kw (:table-name table))
         row-map (util/convert-to-dialect (dialect db-spec) (select-keys data (:attributes table)))
+        _     (log/debug (json/write-str (assoc mdc
+                                           :message "Inserting a row"
+                                           :table (:table-name table)
+                                           :data data
+                                           :row row-map)))
         result (j/insert! db-spec
                           table-name
                           row-map)]
     (log/debug (json/write-str (assoc mdc
-                                 :message "Inserting a row"
+                                 :message "Successfully inserted a row"
                                  :table (:table-name table)
                                  :row row-map
                                  :query-result result)))
