@@ -24,11 +24,13 @@
   (let [mdc (into {} (org.apache.log4j.MDC/getContext))]
     (log/debug (json/write-str (assoc mdc
                                  :raw-query sqlmap)))
+    (try
     (let [result (fn db-spec sqlmap)]
       (log/debug (json/write-str (assoc mdc
                                    :raw-query sqlmap
                                    :query-result result)))
-      result)))
+      result)
+     (catch Exception e (throw (.getNextException e))))))
 
 (defn- query-with-logging!
   [db-spec sqlmap]
