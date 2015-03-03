@@ -61,11 +61,11 @@
   (let [mdc (into {} (org.apache.log4j.MDC/getContext))
         table-name (util/dash-to-underscore-kw (:table-name table))
         row-map (util/convert-to-dialect (dialect db-spec) (select-keys data (:attributes table)))
-        _     (log/debug (json/write-str (assoc mdc
-                                           :message "Inserting a row"
-                                           :table (:table-name table)
-                                           :data data
-                                           :row row-map)))
+        _ (log/debug (json/write-str (assoc mdc
+                                       :message "Inserting a row"
+                                       :table (:table-name table)
+                                       :data data
+                                       :row row-map)))
         result (j/insert! db-spec
                           table-name
                           row-map)]
@@ -74,10 +74,11 @@
                                  :table (:table-name table)
                                  :row row-map
                                  :query-result result)))
-    (if (nil? (ffirst result)) (get data (:primary-key table))  ;if result is nil then we set the primary key ourselves
-                      (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
-                             ffirst
-                             val))))
+    (if (nil? (ffirst result))
+      (get data (:primary-key table)) ; If result is nil, then we set the primary key ourselves
+      (-> result
+          ffirst
+          val))))
 
 
 (defn update-single-entity-in-storage
