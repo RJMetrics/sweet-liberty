@@ -30,7 +30,9 @@
                                    :raw-query sqlmap
                                    :query-result result)))
       result)
-     (catch Exception e (throw (.getNextException e))))))
+     (catch Exception e (do
+                          (log/error "Error runnign SQL: " (.getMessage e))
+                          (throw (.getNextException e)))))))
 
 (defn- query-with-logging!
   [db-spec sqlmap]
