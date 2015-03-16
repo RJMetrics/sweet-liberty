@@ -1,12 +1,16 @@
-(defproject com.rjmetrics.developers/sweet-liberty "0.1.2-SNAPSHOT"
+(defproject com.rjmetrics.developers/sweet-liberty "0.1.3"
   :description "A library for building database-backed RESTful services using Clojure"
   :url "https://github.com/RJMetrics/sweet-liberty"
   :license {:name "Apache 2.0 License"
             :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :scm {:name "git"
-        :url "https://github.com/RJMetrics/sweet-liberty"}
-  :signing {:gpg-key "D44A7290"}
-  :deploy-repositories [["clojars" {:creds :gpg}]]
+        :url "https://github.com/ryanmedlin/sweet-liberty"}
+
+
+  :repositories [["private" {
+                             :sign-releases false
+                             :url "s3p://datasnap-deployments/datasnap/" :username :env :passphrase :env }]]
+
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [liberator "0.12.0"]
                  [honeysql "0.4.3"]
