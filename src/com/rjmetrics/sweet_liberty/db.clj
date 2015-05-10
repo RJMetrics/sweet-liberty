@@ -24,11 +24,15 @@
   (let [mdc (into {} (org.apache.log4j.MDC/getContext))]
     (log/debug (json/write-str (assoc mdc
                                  :raw-query sqlmap)))
+    (try
     (let [result (fn db-spec sqlmap)]
       (log/debug (json/write-str (assoc mdc
                                    :raw-query sqlmap
                                    :query-result result)))
-      result)))
+      result)
+     (catch Exception e (do
+                          (log/error "Error runnign SQL: " (.getMessage e))
+                          (throw (.getNextException e)))))))
 
 (defn- query-with-logging!
   [db-spec sqlmap]
@@ -61,17 +65,23 @@
   (let [mdc (into {} (org.apache.log4j.MDC/getContext))
         table-name (util/dash-to-underscore-kw (:table-name table))
         row-map (util/convert-to-dialect (dialect db-spec) (select-keys data (:attributes table)))
+        _     (log/debug (json/write-str (assoc mdc
+                                           :message "Inserting a row"
+                                           :table (:table-name table)
+                                           :data data
+                                           :row row-map)))
         result (j/insert! db-spec
                           table-name
                           row-map)]
     (log/debug (json/write-str (assoc mdc
-                                 :message "Inserting a row"
+                                 :message "Successfully inserted a row"
                                  :table (:table-name table)
                                  :row row-map
                                  :query-result result)))
-     (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
-           ffirst
-           val)))
+    (if (nil? (ffirst result)) (get data (:primary-key table))  ;if result is nil then we set the primary key ourselves
+                      (-> result ;; take ({:changing-name-key post-id}) and get post-id. always.
+                             ffirst
+                             val))))
 
 
 (defn update-single-entity-in-storage
