@@ -5,6 +5,7 @@
             [ring.mock.request :refer :all]
             [compojure.core :refer [defroutes GET POST PUT DELETE ANY]]
             [clojure.data.json :as json]
+            [liberator.representation :refer [ring-response]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [ring.middleware.params :refer [wrap-params]]
             [com.rjmetrics.sweet-liberty.core :refer :all]
@@ -164,6 +165,15 @@
                        (fn [data result-data ctx]
                          (:post data)))
              (add-post&handler))))
+  (POST "/insert-with-ring-response" []
+        (make-resource
+          (-> (assoc-in default-sweet-lib-config
+                        [:liberator-config :processable?]
+                        (fn [ctx]
+                          (ring-response {:body {:errors "from processable?"}
+                                                 :status  400})))
+              (force-response-through :processable?)
+              (add-post&handler))))
   (DELETE "/delete/:id" [id]
           (make-resource
            (-> default-sweet-lib-config
@@ -517,6 +527,15 @@
                (:status result) => 400
                (:headers result) => {"Content-Type" "application/json; charset=UTF-8"
                                      "Vary" "Accept"})))
+
+(facts "about /insert-with-ring-response"
+       (fact "it will return the response that was provided"
+             (let [result (-> (request :post "/insert-with-ring-response")
+                              (body {:state false})
+                              handler)]
+               (json/read-str (slurp (:body result)) :key-fn keyword)
+               => (contains {:errors "from processable?"})
+               (:status result) => 400)))
 
 (facts "about delete"
        (fact "inserting and then deleting an item should make the database look unaffected"
