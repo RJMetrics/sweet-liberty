@@ -13,7 +13,8 @@
             [clojure.set :refer [subset?]]
             [clojure.data.json :as json]
             [clojure.tools.logging :as log]
-            [ring.util.response :refer :all]))
+            [ring.util.response :refer :all])
+  (:import [liberator.representation RingResponse]))
 
 (def required-table-properties (hash-set :table-name :attributes :primary-key))
 
@@ -69,14 +70,16 @@
   (assoc-in sweet-lib-config [:liberator-config :handle-exception]
             (fn [ctx]
               (let [exception-info (:exception ctx)]
-                (if (-> exception-info ex-data :is-sweet-lib-exception?)
-                  (do
-                    (log-exception exception-info)
-                    (ring-response {:body (get-error-json exception-info
-                                                          (get-in sweet-lib-config [:options :return-exceptions?]))
-                                    :status 400
-                                    :headers {"Content-Type" "application/json; charset=UTF-8"}}))
-                  (handle-exception-fn ctx))))))
+                (if-not (-> exception-info ex-data :is-sweet-lib-exception?)
+                  (handle-exception-fn ctx)
+                  (if-let [response (-> exception-info ex-data :ring-response)]
+                    response
+                    (do
+                      (log-exception exception-info)
+                      (ring-response {:body (get-error-json exception-info
+                                                            (get-in sweet-lib-config [:options :return-exceptions?]))
+                                      :status 400
+                                      :headers {"Content-Type" "application/json; charset=UTF-8"}}))))))))
 
 (defn default-exception-handler-fn
   [sweet-lib-config]
@@ -279,3 +282,15 @@
           (assoc :query-params (conj (:query-params req) (:form-params req) (:body-params req))))
       (throw (Exception. ":form-params must be parsed from the request. Check the wrap-params middleware for ring.")))
     req))
+
+(defn force-response-through
+  [sweet-lib-config decision-point]
+  (let [current-fn (-> sweet-lib-config :liberator-config decision-point)
+        wrapped-fn (fn [ctx]
+                     (let [result (current-fn ctx)]
+                       (if (instance? RingResponse result)
+                         (throw (ex-info "Forcing a response through."
+                                         {:is-sweet-lib-exception? true
+                                          :ring-response result}))
+                         result)))]
+    (assoc-in sweet-lib-config [:liberator-config decision-point] wrapped-fn)))
