@@ -5,6 +5,7 @@
             [ring.mock.request :refer :all]
             [compojure.core :refer [defroutes GET POST PUT DELETE ANY]]
             [clojure.data.json :as json]
+            [liberator.representation :refer [ring-response]]
             [ring.middleware.stacktrace :refer [wrap-stacktrace]]
             [ring.middleware.params :refer [wrap-params]]
             [com.rjmetrics.sweet-liberty.core :refer :all]
@@ -83,6 +84,15 @@
             (assoc-in [:options :return-exceptions?] false)
             (assoc-in [:options :controller]
                       (fn [_ _] (throw (Exception. "exception to be hidden by sweet-lib"))))
+            (add-exists)
+            (add-ok-handler :collection? true))))
+  (GET "/throw-exception/sweet-lib-exception" []
+       (make-resource
+        (-> default-sweet-lib-config
+            (assoc-in [:options :return-exceptions?] false)
+            (assoc-in [:options :controller]
+                      (fn [_ _] (throw (ex-info "exception to be hidden by sweet-lib"
+                                                 {:is-sweet-lib-exception? true}))))
             (add-exists)
             (add-ok-handler :collection? true))))
   (GET "/query-transforms" []
@@ -164,6 +174,15 @@
                        (fn [data result-data ctx]
                          (:post data)))
              (add-post&handler))))
+  (POST "/insert-with-ring-response" []
+        (make-resource
+          (-> (assoc-in default-sweet-lib-config
+                        [:liberator-config :processable?]
+                        (force-response-through
+                          (fn [ctx]
+                            (ring-response {:body {:errors "from processable?"}
+                                                   :status  503}))))
+              (add-post&handler))))
   (DELETE "/delete/:id" [id]
           (make-resource
            (-> default-sweet-lib-config
@@ -518,6 +537,15 @@
                (:headers result) => {"Content-Type" "application/json; charset=UTF-8"
                                      "Vary" "Accept"})))
 
+(facts "about /insert-with-ring-response"
+       (fact "it will return the response that was provided"
+             (let [result (-> (request :post "/insert-with-ring-response")
+                              (body {:state false})
+                              handler)]
+               (json/read-str (slurp (:body result)) :key-fn keyword)
+               => (contains {:errors "from processable?"})
+               (:status result) => 503)))
+
 (facts "about delete"
        (fact "inserting and then deleting an item should make the database look unaffected"
              (let [original (handler (request :get "/"))
@@ -703,6 +731,14 @@
        (fact "default handler recieves exception and returns expected response"
             (let [result (handler (request :get "/throw-exception/default-handler/return-exceptions-false"))]
                (:status result) => 500
+               (-> result
+                   :body
+                   (json/read-str :key-fn keyword)
+                   :exception-message)
+               => "There was an error processing your request."))
+       (fact "sweet-lib exceptions are handled internally"
+            (let [result (handler (request :get "/throw-exception/sweet-lib-exception"))]
+               (:status result) => 400
                (-> result
                    :body
                    (json/read-str :key-fn keyword)
