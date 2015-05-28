@@ -86,6 +86,15 @@
                       (fn [_ _] (throw (Exception. "exception to be hidden by sweet-lib"))))
             (add-exists)
             (add-ok-handler :collection? true))))
+  (GET "/throw-exception/sweet-lib-exception" []
+       (make-resource
+        (-> default-sweet-lib-config
+            (assoc-in [:options :return-exceptions?] false)
+            (assoc-in [:options :controller]
+                      (fn [_ _] (throw (ex-info "exception to be hidden by sweet-lib"
+                                                 {:is-sweet-lib-exception? true}))))
+            (add-exists)
+            (add-ok-handler :collection? true))))
   (GET "/query-transforms" []
        (make-resource
         (-> {:options (assoc default-options
@@ -169,10 +178,10 @@
         (make-resource
           (-> (assoc-in default-sweet-lib-config
                         [:liberator-config :processable?]
-                        (fn [ctx]
-                          (ring-response {:body {:errors "from processable?"}
-                                                 :status  400})))
-              (force-response-through :processable?)
+                        (force-response-through
+                          (fn [ctx]
+                            (ring-response {:body {:errors "from processable?"}
+                                                   :status  503}))))
               (add-post&handler))))
   (DELETE "/delete/:id" [id]
           (make-resource
@@ -535,7 +544,7 @@
                               handler)]
                (json/read-str (slurp (:body result)) :key-fn keyword)
                => (contains {:errors "from processable?"})
-               (:status result) => 400)))
+               (:status result) => 503)))
 
 (facts "about delete"
        (fact "inserting and then deleting an item should make the database look unaffected"
@@ -722,6 +731,14 @@
        (fact "default handler recieves exception and returns expected response"
             (let [result (handler (request :get "/throw-exception/default-handler/return-exceptions-false"))]
                (:status result) => 500
+               (-> result
+                   :body
+                   (json/read-str :key-fn keyword)
+                   :exception-message)
+               => "There was an error processing your request."))
+       (fact "sweet-lib exceptions are handled internally"
+            (let [result (handler (request :get "/throw-exception/sweet-lib-exception"))]
+               (:status result) => 400
                (-> result
                    :body
                    (json/read-str :key-fn keyword)

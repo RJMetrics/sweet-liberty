@@ -284,13 +284,11 @@
     req))
 
 (defn force-response-through
-  [sweet-lib-config decision-point]
-  (let [current-fn (-> sweet-lib-config :liberator-config decision-point)
-        wrapped-fn (fn [ctx]
-                     (let [result (current-fn ctx)]
-                       (if (instance? RingResponse result)
-                         (throw (ex-info "Forcing a response through."
-                                         {:is-sweet-lib-exception? true
-                                          :ring-response result}))
-                         result)))]
-    (assoc-in sweet-lib-config [:liberator-config decision-point] wrapped-fn)))
+  [fn-to-wrap]
+  (fn [ctx]
+    (let [result (fn-to-wrap ctx)]
+      (if (instance? RingResponse result)
+        (throw (ex-info "Forcing a response through."
+                        {:is-sweet-lib-exception? true
+                         :ring-response result}))
+        result))))
