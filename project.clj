@@ -1,4 +1,4 @@
-(defproject com.rjmetrics.developers/sweet-liberty "0.1.2-SNAPSHOT"
+(defproject com.rjmetrics.developers/sweet-liberty "0.1.2"
   :description "A library for building database-backed RESTful services using Clojure"
   :url "https://github.com/RJMetrics/sweet-liberty"
   :license {:name "Apache 2.0 License"
