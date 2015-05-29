@@ -346,6 +346,21 @@ Example:
    (transform-post-to-get request)))
 ```
 
+If you want to return a response at some decision point for any reason (such as if a call to another service fails) you can use the `force-response-through` helper function to wrap your decision function. If your decision function returns a RingResponse then that ring response will be returned immediately. (See the RingResponse section [here](http://clojure-liberator.github.io/liberator/doc/representations.html).)
+
+Example:
+
+```Clojure
+(POST "/resource/:id/query" [id :as request]
+  (-> {:options ..
+       :liberator-config (assoc your-config
+                                :processable?
+                                (force-response-through your-decision-fn))}
+      add-post&handler
+      ..
+      make-resource))
+```
+
 ## Order of Operations
 
 Below is the ordered list of operations that may be applied to a request, which ultimately yields the response.
