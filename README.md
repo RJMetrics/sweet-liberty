@@ -351,7 +351,7 @@ If you want to return a response at some decision point for any reason (such as 
 Example:
 
 ```Clojure
-(POST "/resource/:id/query" [id :as request]
+(POST "/resource
   (-> {:options ..
        :liberator-config (assoc your-config
                                 :processable?
