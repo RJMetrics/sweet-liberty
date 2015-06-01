@@ -98,7 +98,7 @@ Example response`GET /dogs`:
  {:id 2 :name "Rex" :breed "chihuahua"}]
 ```
 
-...and now with a field list `GET /dogs_fields=id&_fields=name`:
+...and now with a field list `GET /dogs?_fields=id&_fields=name`:
 ```Clojure
 [{:id 1 :name "Fido"}
  {:id 2 :name "Rex"}]
