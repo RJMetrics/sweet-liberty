@@ -4,16 +4,16 @@
 
 (facts "get-filter-map returns the filters from the query params map as a map of keywords"
        (fact "when the filter column name is a keyword"
-             (get-filter-map {"_fields" ["x" "y" "zzz"] :column-name 4} {:attributes [:column-name]})
-             => {:column-name 4})
+             (get-filter-map {"_fields" ["x" "y" "zzz"] :column-name 4} {:attributes [:column_name]})
+             => {:column_name 4})
        (fact "when the filter column name is a string"
-             (get-filter-map {"_fields" ["x" "y" "zzz"] "column-name" 4} {:attributes [:column-name]})
-             => {:column-name 4}))
+             (get-filter-map {"_fields" ["x" "y" "zzz"] "column-name" 4} {:attributes [:column_name]})
+             => {:column_name 4}))
 
 (fact "create-default-h-sql-map returns the default Honey-Sql query Map with the :select and :from keys set properly."
-      (create-default-h-sql-map {:attributes [:column-name :another-column-name]
+      (create-default-h-sql-map {:attributes [:column_name :another_column_name]
                                  :table-name :table-name})
-      => {:select [:column-name :another-column-name] :from [:table-name]})
+      => {:select [:column_name :another_column_name] :from [:table-name]})
 
 (facts "set-field-list"
        (let [h-sql-map {:select [:*]
@@ -66,8 +66,8 @@
                    :where [:and [:= :final-column "3"][:= :another-column-name "1"][:in :column-name ["a" "2" "b"]]]})))
 
 (facts "build-paging-query returns a properly formatted sql string and params to be passed to jdbc when given no paging options"
-       (let [table-structure {:attributes [:column-name
-                                           :another-column-name]
+       (let [table-structure {:attributes [:column_name
+                                           :another_column_name]
                               :table-name :table-name}]
          (fact "when there are no query params."
                (build-paging-query table-structure {})
@@ -80,7 +80,7 @@
                => ["SELECT column1, column2 FROM table_name"])
          (fact "when there is a filter query-param."
                (build-paging-query table-structure {:column-name 1
-                                                         :another-column-name 2})
+                                                    :another-column-name 2})
                => ["SELECT column_name, another_column_name FROM table_name WHERE (another_column_name = ? AND column_name = ?)"
                    "2"
                    "1"])

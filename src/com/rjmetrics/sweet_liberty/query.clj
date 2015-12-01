@@ -2,14 +2,17 @@
   (:require [honeysql.core :as sql]
             [honeysql.helpers :refer :all]
             [com.rjmetrics.sweet-liberty.util :as util]
-            [clojure.walk :refer [keywordize-keys]]))
+            [clojure.walk :refer [keywordize-keys]]
+            [camel-snake-kebab.core :refer [->snake_case_keyword]]
+            [camel-snake-kebab.extras :refer [transform-keys]]))
 
 (defn get-filter-map
   "Returns the filters from the query params Map as a Map of keyword fields to values.
   (:attributes table-struct) acts as a whitelist for which items to take.
   (get-filter-map {:columnA value1 :_fields [\"name\"]'} returns {:columnA value1}"
   [query-params table-struct]
-  (select-keys (keywordize-keys query-params) (:attributes table-struct)))
+  (select-keys (transform-keys ->snake_case_keyword query-params)
+               (:attributes table-struct)))
 
 (defn create-default-h-sql-map
   "Returns default Honey-Sql query Map with the :select and :from keys set to the proper attributes
