@@ -1,4 +1,4 @@
-(defproject com.rjmetrics.developers/sweet-liberty "0.1.2"
+(defproject com.rjmetrics.developers/sweet-liberty "0.1.3-SNAPSHOT"
   :description "A library for building database-backed RESTful services using Clojure"
   :url "https://github.com/RJMetrics/sweet-liberty"
   :license {:name "Apache 2.0 License"
@@ -16,7 +16,7 @@
                  [org.clojure/data.json "0.2.4"]
                  [org.clojure/tools.logging "0.2.6"]
                  [org.slf4j/slf4j-log4j12 "1.6.1"]
-                 [camel-snake-kebab "0.2.2" :exclusions [org.clojure/clojure]]
+                 [camel-snake-kebab "0.3.2" :exclusions [org.clojure/clojure]]
                  [log4j/log4j "1.2.15" :exclusions [javax.mail/mail
                                                     javax.jms/jms
                                                     com.sun.jdmk/jmxtools
@@ -34,5 +34,4 @@
                              [s3-wagon-private "1.1.2"]
                              [codox "0.6.7"]
                              [lein-kibit "0.0.8"]
-                             [jonase/eastwood "0.1.1"]
-                             [lein-release "1.0.5"]]}})
+                             [jonase/eastwood "0.1.1"]]}})

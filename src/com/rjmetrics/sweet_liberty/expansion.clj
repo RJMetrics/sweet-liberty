@@ -5,7 +5,7 @@
             [clojure.walk :refer [keywordize-keys]]
             [clojure.tools.logging :as log]
             [clojure.data.json :as json]
-            [camel-snake-kebab.core :refer [->kebab-case-keyword]]))
+            [camel-snake-kebab.core :refer [->snake_case_keyword]]))
 
 (defn- call-service-broker-with-logging
   [service-broker options]
@@ -37,7 +37,7 @@
                        :url-params route-params
                        :request-options request-params}))
       (try
-        (json/read-str (:body sb-result) :key-fn ->kebab-case-keyword)
+        (json/read-str (:body sb-result) :key-fn ->snake_case_keyword)
         (catch Exception e
           (:body sb-result))))))
 
