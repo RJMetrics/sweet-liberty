@@ -55,12 +55,6 @@
       (get-error-map return-exceptions?)
       json/write-str))
 
-(defn- log-exception
-  [exception-info]
-  (let [mdc (into {} (org.apache.log4j.MDC/getContext))
-        formatted-exception (get-error-map exception-info true)]
-    (log/error (json/write-str (merge mdc formatted-exception)))))
-
 (defn add-exception-handler
   "Given a Sweet-Liberty config object, populate the liberator-config
   object's handle-exception property with a function that will catch
@@ -75,7 +69,7 @@
                   (if-let [response (-> exception-info ex-data :ring-response)]
                     response
                     (do
-                      (log-exception exception-info)
+                      (log/error exception-info "unknown sweet-lib exception")
                       (ring-response {:body (get-error-json exception-info
                                                             (get-in sweet-lib-config [:options :return-exceptions?]))
                                       :status 400
@@ -84,7 +78,7 @@
 (defn default-exception-handler-fn
   [sweet-lib-config]
   (fn [ctx]
-    (log-exception (:exception ctx))
+    (log/error (:exception ctx) "unknown exception")
     (-> ctx
         :exception
         (get-error-json (get-in sweet-lib-config [:options :return-exceptions?])))))
