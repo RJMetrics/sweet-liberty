@@ -36,10 +36,8 @@
   (create-h-sql-where-vector [\"column-name\" [2 3]]) returns [:in :another-column [2 3]]"
   [[col-name value]]
   (if (vector? value)
-    (into [:in (keyword col-name)] [(map str value)])
-    (if (nil? value)
-      (into [:= (keyword col-name)] [value])
-      (into [:= (keyword col-name)] [(str value)]))))
+    (into [:in (keyword col-name)] [value])
+    (into [:= (keyword col-name)] [value])))
 
 (defn build-where-vector
   "Returns a Honey-Sql where Vector given a filter-map.
