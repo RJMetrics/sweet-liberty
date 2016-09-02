@@ -43,7 +43,14 @@
 (defn- dialect
   [db-spec]
   (when-let [s (db-spec :subprotocol)]
-    (keyword s)))
+    (case s
+      "mysql" :mysql
+      "sqlserver" :sqlserver
+      "postgresql" :ansi
+      "oracle" :ansi
+      "derby" :ansi
+      "hsqldb" :ansi
+      nil)))
 
 (defn get-records-from-storage
   "Query the storage db for rows in table satisfying specified conditions."
