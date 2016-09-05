@@ -42,7 +42,7 @@
 
 (defn- dialect
   [db-spec]
-  (when-let [s (db-spec :subprotocol)]
+  (when-let [s (:subprotocol db-spec)]
     (case s
       "mysql" :mysql
       "sqlserver" :sqlserver
