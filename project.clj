@@ -1,14 +1,16 @@
-(defproject com.rjmetrics/sweet-liberty "2.0.2"
+(defproject com.rjmetrics/sweet-liberty "2.0.3"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :repositories [["snapshots" {:url "s3://rjmetrics-private-m2-repository/snapshots"
                                :username :env
-                               :passphrase :env}]
+                               :passphrase :env
+                               :sign-releases false }]
                  ["releases" {:url "s3://rjmetrics-private-m2-repository/releases"
                               :username :env
-                              :passphrase :env}]
+                              :passphrase :env
+                              :sign-releases false }]
                  ["conjars" {:url "http://conjars.org/repo"}]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [liberator "0.12.0"]
