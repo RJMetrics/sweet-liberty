@@ -1,16 +1,19 @@
-(defproject com.rjmetrics.developers/sweet-liberty "0.1.4"
-  :description "A library for building database-backed RESTful services using Clojure"
+(defproject com.rjmetrics/sweet-liberty "2.0.2"
+  :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
-  :license {:name "Apache 2.0 License"
-            :url "http://www.apache.org/licenses/LICENSE-2.0"}
-  :scm {:name "git"
-        :url "https://github.com/RJMetrics/sweet-liberty"}
-  :signing {:gpg-key "D44A7290"}
-  :deploy-repositories [["clojars" {:creds :gpg}]]
+  :license {:name "Eclipse Public License"
+            :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :repositories [["snapshots" {:url "s3://rjmetrics-private-m2-repository/snapshots"
+                               :username :env
+                               :passphrase :env}]
+                 ["releases" {:url "s3://rjmetrics-private-m2-repository/releases"
+                              :username :env
+                              :passphrase :env}]
+                 ["conjars" {:url "http://conjars.org/repo"}]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [liberator "0.12.0"]
                  [honeysql "0.4.3"]
-                 [mysql/mysql-connector-java "5.1.25"]
+                 [mysql/mysql-connector-java "8.0.20"]
                  [org.clojars.runa/conjure "2.2.0"]
                  [org.clojure/java.jdbc "0.3.3"]
                  [org.clojure/data.json "0.2.4"]
@@ -34,4 +37,5 @@
                              [s3-wagon-private "1.1.2"]
                              [codox "0.6.7"]
                              [lein-kibit "0.0.8"]
-                             [jonase/eastwood "0.1.1"]]}})
+                             [jonase/eastwood "0.1.1"]
+                             [lein-release "1.0.5"]]}})
