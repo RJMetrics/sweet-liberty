@@ -1,17 +1,12 @@
-(defproject com.rjmetrics/sweet-liberty "2.0.1"
-  :description "A tool to build Liberatingly Sweet REST Resources"
+(defproject org.clojars.patel_vishal/sweet-liberty "0.1.4"
+  :description "A library for building database-backed RESTful services using Clojure"
   :url "https://github.com/RJMetrics/sweet-liberty"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :repositories [["snapshots" {:url "s3://rjmetrics-private-m2-repository/snapshots"
-                               :username :env
-                               :passphrase :env
-                               :sign-releases false }]
-                 ["releases" {:url "s3://rjmetrics-private-m2-repository/releases"
-                              :username :env
-                              :passphrase :env
-                              :sign-releases true }]
-                 ["conjars" {:url "http://conjars.org/repo"}]]
+  :license {:name "Apache 2.0 License"
+            :url "http://www.apache.org/licenses/LICENSE-2.0"}
+  :scm {:name "git"
+        :url "https://github.com/RJMetrics/sweet-liberty"}
+  :signing {:gpg-key "A2F31BD70670148A"}
+  :deploy-repositories [["clojars" {:creds :gpg :sign-releases false}]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [liberator "0.12.0"]
                  [honeysql "0.4.3"]
@@ -39,5 +34,4 @@
                              [s3-wagon-private "1.1.2"]
                              [codox "0.6.7"]
                              [lein-kibit "0.0.8"]
-                             [jonase/eastwood "0.1.1"]
-                             [lein-release "1.0.5"]]}})
+                             [jonase/eastwood "0.1.1"]]}})
