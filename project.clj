@@ -1,4 +1,4 @@
-(defproject com.rjmetrics/sweet-liberty "2.0.3"
+(defproject com.rjmetrics/sweet-liberty "2.0.4"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
   :license {:name "Eclipse Public License"
