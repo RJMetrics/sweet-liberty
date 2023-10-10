@@ -1,12 +1,9 @@
 (defproject com.rjmetrics/sweet-liberty "2.0.4"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
-  :license {:name "Eclipse Public License"
-            :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   :source-paths ["src/clj"]
   :resource-paths ["resources/base"]
-  :test-paths ["test/clj/"]
   :target-path "target/%s"
 
   :repositories [["snapshots" {:url "s3://rjmetrics-private-m2-repository/snapshots"
@@ -33,12 +30,11 @@
                                                     javax.jms/jms
                                                     com.sun.jdmk/jmxtools
                                                     com.sun.jmx/jmxri]]]
-  :plugins [[s3-wagon-private "1.1.2"]]
-  :profiles {:dev {:dependencies [[midje "1.6.2"]
+  :profiles {:dev {:dependencies [[midje "1.7.0"]
                                   [compojure "1.1.6"]
                                   [org.hsqldb/hsqldb "2.2.4"]
                                   [org.clojure/clojure-contrib "1.2.0"]
-                                  [org.clojure/java.jdbc "0.3.3"]
+                                  [org.clojure/java.jdbc "0.4.1"]
                                   [org.clojars.runa/conjure "2.2.0"]
                                   [ring-mock "0.1.5"]
                                   [ring/ring-core "1.2.1"]
