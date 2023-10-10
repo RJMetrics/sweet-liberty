@@ -43,4 +43,13 @@
                              [codox "0.6.7"]
                              [lein-kibit "0.0.8"]
                              [jonase/eastwood "0.1.1"]
-                             [lein-release "1.0.5"]]}})
+                             [lein-release "1.0.5"]]}}
+
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag" "--no-sign"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]])
