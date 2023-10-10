@@ -1,8 +1,14 @@
-(defproject com.rjmetrics/sweet-liberty "2.0.3"
+(defproject com.rjmetrics/sweet-liberty "2.0.3-SNAPSHOT"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+
+  :source-paths ["src/clj"]
+  :resource-paths ["resources/base"]
+  :test-paths ["test/clj/"]
+  :target-path "target/%s"
+
   :repositories [["snapshots" {:url "s3://rjmetrics-private-m2-repository/snapshots"
                                :username :env
                                :passphrase :env
