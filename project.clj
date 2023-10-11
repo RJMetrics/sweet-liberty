@@ -1,12 +1,19 @@
-(defproject com.rjmetrics.developers/sweet-liberty "0.1.5"
-  :description "A library for building database-backed RESTful services using Clojure"
+(defproject com.rjmetrics/sweet-liberty-clj "0.1.5"
+  :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
-  :license {:name "Apache 2.0 License"
-            :url "http://www.apache.org/licenses/LICENSE-2.0"}
-  :scm {:name "git"
-        :url "https://github.com/RJMetrics/sweet-liberty"}
-  :signing {:gpg-key "D44A7290"}
-  :deploy-repositories [["clojars" {:creds :gpg}]]
+
+  :source-paths ["src"]
+  :resource-paths ["resources/base"]
+  :target-path "target/%s"
+
+  :repositories [["snapshots" {:url "s3://rjmetrics-private-m2-repository/snapshots"
+                               :username :env
+                               :passphrase :env
+                              :sign-releases false }]
+                 ["releases" {:url "s3://rjmetrics-private-m2-repository/releases"
+                              :username :env
+                              :passphrase :env
+                              :sign-releases false}]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [liberator "0.12.0"]
                  [honeysql "0.4.3"]
@@ -29,9 +36,19 @@
                                   [org.clojars.runa/conjure "2.2.0"]
                                   [ring-mock "0.1.5"]
                                   [ring/ring-core "1.2.1"]
-                                  [ring-middleware-format "0.3.2"]]
+                                  [ring-middleware-format "0.3.2"]
+                                  [com.rjmetrics/service-broker "0.2.5"]]
                    :plugins [[lein-midje "3.1.3"]
                              [s3-wagon-private "1.1.2"]
                              [codox "0.6.7"]
                              [lein-kibit "0.0.8"]
-                             [jonase/eastwood "0.1.1"]]}})
+                             [jonase/eastwood "0.1.1"]]}}
+
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit"]
+                  ["vcs" "tag" "--no-sign"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]])
