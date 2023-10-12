@@ -1,10 +1,6 @@
-(defproject com.rjmetrics/sweet-liberty "2.0.4-SNAPSHOT"
+(defproject com.rjmetrics/sweet-liberty-clj "2.0.4"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
-
-  :source-paths ["src"]
-  :resource-paths ["resources/base"]
-  :target-path "target/%s"
 
   :repositories [["snapshots" {:url "s3p://rjmetrics-private-m2-repository/releases"
                                :username :env
@@ -28,7 +24,6 @@
                                                     javax.jms/jms
                                                     com.sun.jdmk/jmxtools
                                                     com.sun.jmx/jmxri]]]
-  :plugins [[s3-wagon-private "1.1.2"]]
   :profiles {:dev {:dependencies [[midje "1.6.2"]
                                   [compojure "1.1.6"]
                                   [org.hsqldb/hsqldb "2.2.4"]
