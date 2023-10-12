@@ -1,4 +1,4 @@
-(defproject com.rjmetrics/sweet-liberty-clj "2.0.32-SNAPSHOT"
+(defproject com.rjmetrics/sweet-liberty-clj "2.0.31"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
 
@@ -9,6 +9,7 @@
                  ["releases" {:url "s3p://rjmetrics-private-m2-repository/snapshots"
                               :username :env
                               :passphrase :env
+                              :snapshots false
                               :sign-releases false}]]
   :dependencies [[org.clojure/clojure "1.5.1"]
                  [liberator "0.12.0"]
