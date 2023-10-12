@@ -1,4 +1,4 @@
-(defproject com.rjmetrics/sweet-liberty-clj "2.0.34-SNAPSHOT"
+(defproject com.rjmetrics/sweet-liberty "2.0.34"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
 
