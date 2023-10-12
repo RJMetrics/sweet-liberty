@@ -1,12 +1,13 @@
-(defproject com.rjmetrics/sweet-liberty-clj "2.0.33-SNAPSHOT"
+(defproject com.rjmetrics/sweet-liberty-clj "2.0.33"
   :description "A tool to build Liberatingly Sweet REST Resources"
   :url "https://github.com/RJMetrics/sweet-liberty"
 
-  :repositories [["snapshots" {:url "s3p://rjmetrics-private-m2-repository/releases"
+  :repositories [["snapshots" {:url "s3p://rjmetrics-private-m2-repository/snapshots"
                                :username :env
                                :passphrase :env
+                               :snapshots false
                               :sign-releases false }]
-                 ["releases" {:url "s3p://rjmetrics-private-m2-repository/snapshots"
+                 ["releases" {:url "s3p://rjmetrics-private-m2-repository/releases"
                               :username :env
                               :passphrase :env
                               :snapshots false
